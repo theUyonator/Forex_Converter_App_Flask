@@ -20,7 +20,7 @@ class ForexConverterTest(TestCase):
     def test_redirect(self):
         """This method test to see if a redirect takes place on form submission"""
         with app.test_client() as client:
-            resp = client.get("/fx_converter?from=USD&to=AUD&amount=10")
+            resp = client.get("/fx_converter?from=USD&to=USD&amount=1.55")
 
             self.assertEqual(resp.status_code, 302)
             self.assertEqual(resp.location, "http://localhost/")
@@ -28,8 +28,28 @@ class ForexConverterTest(TestCase):
     def test_redirect_followed(self):
         """This method test to see if the expected content shows after the redirect takes place"""
         with app.test_client() as client:
-            resp = client.get("/fx_converter?from=USD&to=AUD&amount=10", follow_redirects=True)
+            resp = client.get("/fx_converter?from=USD&to=USD&amount=1.55", follow_redirects=True)
             html = resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<p><strong>The result is $12.94</strong></p>', html)
+            self.assertIn('<p><strong>The result is US$1.55</strong></p>', html)
+
+    def test_wrong_code(self):
+        """This method test to see if the expected content shows after a wrong currency code has been entered into the converter"""
+        with app.test_client() as client:
+            resp = client.get("/fx_converter?from=USD&to=FCC&amount=10", follow_redirects=True)
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<p><strong>Not a valid code: FCC</strong></p>', html)
+
+    def test_invalid_amount(self):
+        """This method test to see if the expected content shows after an invalid amount has been entered into the converter"""
+        with app.test_client() as client:
+            resp = client.get("/fx_converter?from=USD&to=AUD&amount=bl", follow_redirects=True)
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<p><strong>Not a valid amount</strong></p>', html)
+
+    

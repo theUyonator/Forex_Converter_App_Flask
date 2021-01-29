@@ -20,10 +20,14 @@ def convert():
     """This function flashes a message in the html showing the status of the conversion"""
     convert_from = request.args["from"]
     convert_to = request.args["to"]
-    amount = float(request.args["amount"])
+    try:
+        amount = float(request.args["amount"])
+    except ValueError:
+        amount = request.args["amount"]
+    msg = None
 
     forex_converter = ForexConverter(convert_from, convert_to, amount)
-    msg = forex_converter.convert_currency()
+    msg = forex_converter.conversion_check()
 
     flash(msg)
 

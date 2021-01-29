@@ -57,10 +57,9 @@ class ForexConverter():
 
     def conversion_check(self):
        """This method checks to see the correct inputs are entered and handles the error if any exist"""
-    
        if self.convert_to not in self.supported_currency_codes and self.convert_from not in self.supported_currency_codes:
-           return f"Both {self.convert_from} and {self.convert_to} are invalid codes!" 
-
+            return f"Both {self.convert_from} and {self.convert_to} are invalid codes!" 
+      
        if self.convert_from not in self.supported_currency_codes:
            return f"Not a valid code: {self.convert_from}"
 
@@ -72,6 +71,7 @@ class ForexConverter():
         
        else:
            return self.convert_currency() 
+                
 
     def convert_currency(self):
         """This method converts one currency to another"""
